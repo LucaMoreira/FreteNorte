@@ -1,11 +1,12 @@
 <script setup>
 import { RouterLink, useRoute, useRouter } from 'vue-router';
-import { getFirestore, doc } from 'firebase/firestore'
+import { getFirestore, doc, collection } from 'firebase/firestore'
+
 import { firebaseApp } from '@/firebaseConfig'
 import { computed, reactive, ref, toValue } from 'vue';
 import { update_item } from '@/stores/singleitem'
 import QRCode from '@/components/QRCode.vue';
-import { useDocument } from 'vuefire';
+import { useDocument, useCollection } from 'vuefire';
 import ModalDelete from '@/components/ModalDelete.vue'; 
 import { deleta_item } from '@/stores/items'
 import Vue3Barcode from 'vue3-barcode'
@@ -23,7 +24,10 @@ const {
     // A promise that resolves or rejects when the initial state is loaded
     promise
 } = useDocument(doc(db, 'items', route.params.codigo))
- 
+
+// pega todos os ambientes cadastrados
+const ambientes = useCollection(collection(db, 'ambientes'))
+
 const validacao = reactive({
     medidas: true,
     peso: true
@@ -54,10 +58,19 @@ async function atualiza_item() {
         return false
     } else {
     const valores = toValue(item)
+    var ca = ''
+    if (valores.ambiente.codigo == undefined) {
+        // ambiente foi atualizado
+        ca = valores.ambiente
+    } else {
+        // ambiente nao foi atualizado
+        ca = valores.ambiente.codigo
+    }
     console.log({...valores.detalhes})
     const uptime = await update_item(valores.key, {
-         "detalhes.medidas":   valores.detalhes.medidas,
-          "detalhes.peso": valores.detalhes.peso
+        "detalhes.medidas": valores.detalhes.medidas,
+        "detalhes.peso"   : valores.detalhes.peso,
+        "ambiente"        : doc(db, "ambientes", ca)
     })  
 
     console.log(`Item ${valores.key} atualizado`)
@@ -147,6 +160,15 @@ function desmarcar_como_infra(){
                                     <th scope="row">Origem</th>
                                     <td>{{ item.origem }}</td>
                                 </tr>
+                                <tr>
+                                    <th scope="row">Ambiente</th>
+                                    <td >
+                                        <select class="form-select input-group  w-50" v-model.trim="item.ambiente">
+                                            <option selected>{{ item.ambiente.codigo }}</option>
+                                            <option v-for="ambiente in ambientes">{{ ambiente.codigo }}</option>
+                                        </select>
+                                    </td>
+                                </tr>
                                 <tr v-if="item.detalhes.patrimonio">
                                     <th scope="row">Patrimônio</th>
                                     <td>{{ item.detalhes.patrimonio }}</td>
@@ -166,7 +188,7 @@ function desmarcar_como_infra(){
                                     <td>
                                         <div class="input-group  w-50" >
                                         <input :class="{'border-danger': !validacao.medidas}" placeholder="L x A x P em centímetros"
-                                         class="form-control" v-model.trim="item.detalhes.medidas">
+                                        class="form-control" v-model.trim="item.detalhes.medidas">
                                         <span class="input-group-text">cm</span>
                                         </div>
                                     </td>
