@@ -158,7 +158,11 @@ function desmarcar_como_infra(){
                                 </tr>
                                 <tr>
                                     <th scope="row">Origem</th>
-                                    <td>{{ item.origem }}</td>
+                                    <td>{{ item.origem }} </td>
+                                </tr>
+                                <tr v-if="item.origem != item.ambiente.codigo">
+                                    <th scope="row">Local atual</th>
+                                    <td>{{ item.ambiente.codigo }}</td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Ambiente</th>
@@ -264,10 +268,20 @@ function desmarcar_como_infra(){
                                     <template v-if="item.ambiente.codigo == 'PERDIDO' ">
                                     <td colspan="2" class="text-light fs-4 text-center bg-danger">
                                         Esse item está marcado como perdido
-                                        <p @click="desmarcar_como_perdido" class="fs-6 mb-0 text-primary-emphasis" role="button">Clique aqui para desmarcar esse item como perdido</p>
+                                        <p @click="desmarcar_como_perdido" class="fs-6 mb-0 text-primary-emphasis" role="button">Clique aqui para desmarcar esse item como perdido.</p>
+
                                     </td>
                                     </template>
                                 </tr>
+                                <tr v-if="item.ambiente.codigo == 'PERDIDO' ">
+                                    <td colspan="2" class="text-center">
+                                        <p class="fs-6 text-primary-emphasis" role="button">Encontrou esse item? 
+                                            <RouterLink :to="{name: 'item-codigo-localizacao', params: {codigo: route.params.codigo}}">
+                                            Clique aqui para indicar o local.
+                                            </RouterLink>
+                                        </p>
+                                    </td>
+                                    </tr>
                                 </template>
                                 <tr>
                                     <template v-if="item.ambiente.codigo != 'INFRA' && item.ambiente.codigo != 'PERDIDO'">

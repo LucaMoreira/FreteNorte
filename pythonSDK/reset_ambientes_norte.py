@@ -41,7 +41,7 @@ def batch_write(collection: str, dictarray: list[dict], key_id: str | None = Non
 
 
 if __name__ == "__main__":
-    ambientes_norte = load_json_file('json/ambientes-norte.json')
+    ambientes_norte = load_json_file('json0929/ambientes-norte.json')
     amb_norte_codigo = [x["codigo"] for x in ambientes_norte ]
     batch_write('ambientes-norte', ambientes_norte, 'codigo')
     db.document('agregados/ambientes_norte').set({'codigos': sorted(amb_norte_codigo)})

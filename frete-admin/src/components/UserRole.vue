@@ -7,7 +7,7 @@ defineProps({
     label: String
 })
 
-const roles = ref(["Usuário", "Administrador", "Líder de Ambiente", "Comissão de Logística"])
+const roles = ref(["Usuário", "Administrador", "Líder de Ambiente", "Comissão de Logística", "Dev"])
 
 </script>
 <template> 

@@ -62,6 +62,13 @@ const router = createRouter({
           meta: { title: "Item por código"}
         },
         {
+          name: 'item-codigo-localizacao',
+          path: 'cod/:codigo/localizacao',
+          component: () => import('../views/items/cod-local.vue'),
+          meta: { title: "Item - Ajustar localização"}
+
+        },
+        {
           name: 'item-codigo-partes',
           path: 'cod/:codigo/partes',
           component: () => import('../views/items/codpartes.vue'),
